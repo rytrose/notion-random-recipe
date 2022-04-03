@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@notionhq/client": "^0.4.13",
+    "   ": "^10.0.0"
+  },
+  "name": "random-recipe",
+  "version": "0.0.1",
+  "description": "Select a random recipe from a recipe database.",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Ryan Rose",
+  "license": "ISC"
+}
