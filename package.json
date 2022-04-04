@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@notionhq/client": "^0.4.13",
-    "   ": "^10.0.0"
+    "dotenv": "^10.0.0"
   },
   "name": "random-recipe",
   "version": "0.0.1",
