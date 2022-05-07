@@ -1,7 +1,21 @@
 const dotenv = require("dotenv");
 const { Client } = require("@notionhq/client");
 
-dotenv.config({ path: `${__dirname}/.env` });
+const args = process.argv.slice(2);
+const rytrose = args[0] === "rytrose";
+const zamily = args[0] === "zamily";
+
+let dotenvFile = ".env";
+
+if (rytrose) {
+  console.log("using rytrose configuration");
+  dotenvFile = ".env-rytrose";
+} else if (zamily) {
+  console.log("using zamily configuration");
+  dotenvFile = ".env-zamily";
+}
+
+dotenv.config({ path: `${__dirname}/${dotenvFile}` });
 const notion = new Client({ auth: process.env.NOTION_KEY });
 
 const RECIPIES_DATABASE_ID = process.env.RECIPIES_DATABASE_ID;
@@ -37,8 +51,12 @@ class RethrownError extends Error {
 
 async function main() {
   while (true) {
-    await pollRandomRecipe();
-    await checkTags();
+    try {
+      await pollRandomRecipe();
+      await checkTags();
+    } catch (error) {
+      console.error("Unhandled error:", error);
+    }
   }
 }
 
@@ -252,7 +270,7 @@ async function checkTags() {
       await addTags(tagsTextToAdd);
     }
   } catch (error) {
-    throw new RethrownError("Unable to check tags", error);
+    console.log("Unable to check tags", error);
   }
 }
 
