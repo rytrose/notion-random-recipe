@@ -266,8 +266,14 @@ async function checkTags() {
     const filterTags = await getFilterTags();
     const filterTagsText = filterTags.map((t) => getFilterTagText(t));
     const tagsTextToAdd = tagsText.filter((t) => !filterTagsText.includes(t));
+    const tagsToRemove = filterTags.filter(
+      (t) => !tagsText.includes(getFilterTagText(t))
+    );
     if (tagsTextToAdd.length > 0) {
       await addTags(tagsTextToAdd);
+    }
+    if (tagsToRemove.length > 0) {
+      await deleteTags(tagsToRemove);
     }
   } catch (error) {
     console.log("Unable to check tags", error);
@@ -333,6 +339,24 @@ async function addTags(tags) {
     return;
   } catch (error) {
     throw new RethrownError("Unable to add filter tag block", error);
+  }
+}
+
+async function deleteTags(tags) {
+  try {
+    for (let tag of tags) {
+      await notion.blocks.delete({
+        block_id: tag.id,
+      });
+    }
+
+    // Be sure to invalidate tags cache, otherwise it will
+    // add duplicates
+    filterTagCache = undefined;
+    lastUpdatedFilterTags = undefined;
+    return;
+  } catch (error) {
+    throw new RethrownError("Unable to delete filter tag block", error);
   }
 }
 
